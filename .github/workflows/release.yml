@@ -12,13 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # cabextract for fonts
+      - uses: actions/checkout@master
+
       - name: Setup prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get -y install cabextract p7zip-full libxml2-utils
-
-      - uses: actions/checkout@master
+          sudo apt-get -y install p7zip-full
 
       - name: Build
         run: |
