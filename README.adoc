@@ -1,0 +1,30 @@
+= Adobe Source fonts in a package
+
+https://github.com/fontist/source-fonts/actions/workflows/ubuntu.yml[image:https://github.com/fontist/source-fonts/actions/workflows/ubuntu.yml/badge.svg[]]
+https://github.com/fontist/source-fonts/actions/workflows/release.yml[image:https://github.com/fontist/source-fonts/actions/workflows/release.yml/badge.svg[]]
+
+== Purpose
+
+This repository is used to produce a single package for Adobe Source fonts.
+
+== Contents
+
+The fonts provided in the package include:
+
+* https://github.com/adobe-fonts/source-sans-pro[Adobe Source Sans Pro]
+* https://github.com/adobe-fonts/source-serif-pro[Adobe Source Serif Pro]
+* https://github.com/adobe-fonts/source-code-pro[Adobe Source Code Pro]
+* https://github.com/adobe-fonts/source-han-sans[Adobe Source Han Sans]
+
+== Changelog
+
+=== v1.0
+
+This release provides a package that includes:
+
+* https://github.com/adobe-fonts/source-sans-pro[Adobe Source Sans Pro]
+* https://github.com/adobe-fonts/source-serif-pro[Adobe Source Serif Pro]
+* https://github.com/adobe-fonts/source-code-pro[Adobe Source Code Pro]
+* https://github.com/adobe-fonts/source-han-sans[Adobe Source Han Sans],
+taken from https://github.com/Pal3love/Source-Han-TrueType/raw/master/SourceHanSans.7z
+from the https://github.com/Pal3love/Source-Han-TrueType[Pal3love/Source-Han-TrueType repository].
