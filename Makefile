@@ -7,6 +7,8 @@ else
 endif
 PATHSEP := $(strip $(PATHSEP2))
 
+7ZEXE := $(which 7z)
+
 FONTS := \
 	SourceCodePro-Black.ttf \
 	SourceCodePro-BlackIt.ttf \
@@ -46,13 +48,7 @@ FONTS := \
 	SourceSerifPro-Regular.ttf \
 	SourceSerifPro-Semibold.ttf \
 	SourceSerifPro-SemiboldIt.ttf \
-	SourceHanSans-Bold.ttc \
-	SourceHanSans-ExtraLight.ttc \
-	SourceHanSans-Heavy.ttc \
-	SourceHanSans-Light.ttc \
-	SourceHanSans-Medium.ttc \
-	SourceHanSans-Normal.ttc \
-	SourceHanSans-Regular.ttc
+	SourceHanSans.ttc
 
 FONTS := $(addprefix fonts/,$(FONTS))
 
@@ -73,26 +69,28 @@ fonts:
 	mkdir -p $(subst /,$(PATHSEP),$@)
 
 fonts/SourceSansPro-%: | fonts
-	curl -sSL -o $@ https://github.com/adobe-fonts/source-sans-pro/raw/release/TTF/$(notdir $@)
+	export TMPDIR=$(mktemp); \
+	curl -sSL -o ${TMPDIR}/ssp.zip https://github.com/adobe-fonts/source-sans/releases/download/3.006R/source-sans-pro-3.006R.zip ; \
+	unzip -j -f ${TMPDIR}/ssp.zip *.ttf -d ${TMPDIR}fonts ; \
+	cp ${TMPDIR}fonts/SourceSansPro-*.ttf fonts/
 
 fonts/SourceSerifPro-%: | fonts
-	curl -sSL -o $@ https://github.com/adobe-fonts/source-serif-pro/raw/release/TTF/$(notdir $@)
+	export TMPDIR=$(mktemp); \
+	curl -sSL -o ${TMPDIR}ssp.zip https://github.com/adobe-fonts/source-serif/releases/download/3.001R/source-serif-pro-3.001R.zip ; \
+	unzip -j -f ${TMPDIR}ssp.zip *.ttf -d ${TMPDIR}fonts ; \
+	cp ${TMPDIR}fonts/SourceSerifPro-*.ttf fonts/
 
 fonts/SourceCodePro-%: | fonts
-	curl -sSL -o $@ https://github.com/adobe-fonts/source-code-pro/raw/release/TTF/$(notdir $@)
+	curl -sSL -o $@ https://github.com/adobe-fonts/source-code-pro/raw/2.030R-ro/1.050R-it/TTF/$(notdir $@)
 
-tmp:
-	mkdir -p $@
+# tmp:
+# 	mkdir -p $@
 
-tmp/SourceHanSans.7z: | tmp
-	curl -ssL -o $@ https://github.com/Pal3love/Source-Han-TrueType/raw/master/SourceHanSans.7z
+# tmp/SourceHanSans.7z: | tmp
+# 	curl -ssL -o $@ https://github.com/Pal3love/Source-Han-TrueType/raw/master/SourceHanSans.7z
 
-tmp/SourceHanSans-%.ttc: tmp/SourceHanSans.7z
-	7za e -y $< -otmp
-	touch tmp/*.ttc
-
-fonts/SourceHanSans-%.ttc: tmp/SourceHanSans-%.ttc
-	cp $< $@
+fonts/SourceHanSans.ttc: | fonts
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-sans/releases/download/2.001R/SourceHanSans.ttc
 
 # version:
 # 	echo "${JAR_VERSION}"
