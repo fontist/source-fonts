@@ -1,0 +1,41 @@
+== CHANGELOG
+
+=== v1.2
+
+Package split into two: `source-fonts-latn.zip` (Latin fonts) and
+`source-fonts-cjk.zip` (CJK fonts).
+
+Updated fonts:
+
+* https://github.com/adobe-fonts/source-sans/releases/download/3.046R/TTF-source-sans-3.046R.zip[Adobe Source Sans Pro (3.046R)]
+* https://github.com/adobe-fonts/source-serif/releases/download/4.004R/source-serif-4.004.zip[Adobe Source Serif Pro (4.004R)]
+* https://github.com/adobe-fonts/source-code-pro/releases/download/2.038R-ro%2F1.058R-it%2F1.018R-VAR/TTF-source-code-pro-2.038R-ro-1.058R-it.zip[Adobe Source Code Pro branch 2.038R-ro/1.058R-it/1.018R-VAR]
+* https://github.com/adobe-fonts/source-han-sans/releases/download/2.004R/SourceHanSans-VF.zip[Adobe Source Han Sans (2.004R)]
+* https://github.com/adobe-fonts/source-han-serif/releases/download/2.001R/02_SourceHanSerif-VF.zip[Adobe Source Han Serif (2.001R)]
+
+Added font:
+
+* https://github.com/adobe-fonts/source-han-mono/releases/download/1.002/SourceHanMono.ttc[Adobe Source Han Mono (1.002)]
+
+
+=== v1.1
+
+* https://github.com/adobe-fonts/source-sans/releases/tag/3.006R[Adobe Source Sans Pro (3.006R)]
+* https://github.com/adobe-fonts/source-serif/releases/tag/3.001R[Adobe Source Serif Pro (3.001R)]
+* https://github.com/adobe-fonts/source-code-pro/tree/2.030R-ro/1.050R-it[Adobe Source Code Pro branch 2.030R-ro/1.050R-it]
+* https://github.com/adobe-fonts/source-han-sans/releases/tag/2.001R[Adobe Source Han Sans (2.001R)]
+
+The following files have been combined into a single `SourceHanSans.ttc`` ("Super OTC"):
+
+* SourceHanSans-Bold.ttc
+* SourceHanSans-ExtraLight.ttc
+* SourceHanSans-Heavy.ttc
+* SourceHanSans-Light.ttc
+* SourceHanSans-Medium.ttc
+* SourceHanSans-Normal.ttc
+* SourceHanSans-Regular.ttc
+
+=== v1.0
+
+First release
+
