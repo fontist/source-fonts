@@ -18,15 +18,4 @@ The fonts provided in the package include:
 
 === Font versions
 
-[cols="a,5a"]
-|===
-| Package version | Font versions
-
-| v1.0.1
-|
-* https://github.com/adobe-fonts/source-sans/releases/tag/3.006R[Adobe Source Sans Pro (3.006R)]
-* https://github.com/adobe-fonts/source-serif/releases/tag/3.001R[Adobe Source Serif Pro (3.001R)]
-* https://github.com/adobe-fonts/source-code-pro/tree/2.030R-ro/1.050R-it[Adobe Source Code Pro branch 2.030R-ro/1.050R-it]
-* https://github.com/adobe-fonts/source-han-sans/releases/tag/2.001R[Adobe Source Han Sans (2.001R)]
-
-|===
+See link:CHANGELOG.adoc[]

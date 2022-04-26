@@ -7,9 +7,7 @@ else
 endif
 PATHSEP := $(strip $(PATHSEP2))
 
-7ZEXE := $(which 7z)
-
-FONTS := \
+LATN := \
 	SourceCodePro-Black.ttf \
 	SourceCodePro-BlackIt.ttf \
 	SourceCodePro-Bold.ttf \
@@ -24,74 +22,106 @@ FONTS := \
 	SourceCodePro-Regular.ttf \
 	SourceCodePro-Semibold.ttf \
 	SourceCodePro-SemiboldIt.ttf \
-	SourceSansPro-Black.ttf \
-	SourceSansPro-BlackIt.ttf \
-	SourceSansPro-Bold.ttf \
-	SourceSansPro-BoldIt.ttf \
-	SourceSansPro-ExtraLight.ttf \
-	SourceSansPro-ExtraLightIt.ttf \
-	SourceSansPro-It.ttf \
-	SourceSansPro-Light.ttf \
-	SourceSansPro-LightIt.ttf \
-	SourceSansPro-Regular.ttf \
-	SourceSansPro-Semibold.ttf \
-	SourceSansPro-SemiboldIt.ttf \
-	SourceSerifPro-Black.ttf \
-	SourceSerifPro-BlackIt.ttf \
-	SourceSerifPro-Bold.ttf \
-	SourceSerifPro-BoldIt.ttf \
-	SourceSerifPro-ExtraLight.ttf \
-	SourceSerifPro-ExtraLightIt.ttf \
-	SourceSerifPro-It.ttf \
-	SourceSerifPro-Light.ttf \
-	SourceSerifPro-LightIt.ttf \
-	SourceSerifPro-Regular.ttf \
-	SourceSerifPro-Semibold.ttf \
-	SourceSerifPro-SemiboldIt.ttf \
-	SourceHanSans.ttc
+	SourceSans3-SemiboldIt.ttf \
+	SourceSans3-Regular.ttf \
+	SourceSans3-BlackIt.ttf \
+	SourceSans3-It.ttf \
+	SourceSans3-Black.ttf \
+	SourceSans3-Bold.ttf \
+	SourceSans3-LightIt.ttf \
+	SourceSans3-ExtraLight.ttf \
+	SourceSans3-Light.ttf \
+	SourceSans3-Semibold.ttf \
+	SourceSans3-BoldIt.ttf \
+	SourceSans3-ExtraLightIt.ttf \
+	SourceSerif4-Black.ttf \
+	SourceSerif4-BlackIt.ttf \
+	SourceSerif4-Bold.ttf \
+	SourceSerif4-BoldIt.ttf \
+	SourceSerif4-ExtraLight.ttf \
+	SourceSerif4-ExtraLightIt.ttf \
+	SourceSerif4-It.ttf \
+	SourceSerif4-Light.ttf \
+	SourceSerif4-LightIt.ttf \
+	SourceSerif4-Regular.ttf \
+	SourceSerif4-Semibold.ttf \
+	SourceSerif4-SemiboldIt.ttf
 
-FONTS := $(addprefix fonts/,$(FONTS))
+CJK := \
+	SourceHanSans-VF.ttf \
+	SourceHanSerif-VF.ttf \
+	SourceHanMono.ttc
 
-all: source-fonts.zip
+FONTS_LATN := $(addprefix fonts-latn/,$(LATN))
+FONTS_CJK := $(addprefix fonts-cjk/,$(notdir $(CJK)))
+
+all: source-fonts-latn.zip source-fonts-cjk.zip
 
 test:
 
 clean:
-	rm -rf source-fonts.zip fonts
+	rm -rf source-fonts-*.zip fonts-latn fonts-cjk tmp
 
-distclean:
-	rm -rf fonts
+distclean: clean
+	rm -rf .archive
 
-source-fonts.zip: $(FONTS)
-	zip -9 -r $@ fonts
+source-fonts-latn.zip: $(FONTS_LATN)
+	zip -9 -r $@ fonts-latn
 
-fonts:
+source-fonts-cjk.zip: $(FONTS_CJK)
+	zip -9 -r $@ fonts-cjk
+
+fonts-%:
 	mkdir -p $(subst /,$(PATHSEP),$@)
 
-fonts/SourceSansPro-%: tmp/source-sans-pro.zip | fonts
+fonts-latn/SourceSans3-%: .archive/source-sans-pro.zip | fonts-latn
 	mkdir -p tmp/source-sans-pro; \
-	unzip -j $< -d tmp/source-sans-pro ; \
-	cp tmp/source-sans-pro/SourceSansPro-*.ttf fonts/
+	unzip -j $< '*$(notdir $@)' -d tmp/source-sans-pro ; \
+	cp tmp/source-sans-pro/$(notdir $@) $@
 
-fonts/SourceSerifPro-%: tmp/source-serif-pro.zip | fonts
+fonts-latn/SourceSerif4-%: .archive/source-serif-pro.zip | fonts-latn
 	mkdir -p tmp/source-serif-pro; \
-	unzip -j $< -d tmp/source-serif-pro ; \
-	cp tmp/source-serif-pro/SourceSerifPro-*.ttf fonts/
+	unzip -j $< '*$(notdir $@)' -d tmp/source-serif-pro ; \
+	cp tmp/source-serif-pro/$(notdir $@) $@
 
-fonts/SourceCodePro-%: | fonts
-	curl -sSL -o $@ https://github.com/adobe-fonts/source-code-pro/raw/2.030R-ro/1.050R-it/TTF/$(notdir $@)
+fonts-latn/SourceCodePro-%: .archive/source-code-pro.zip | fonts-latn
+	mkdir -p tmp/source-code-pro; \
+	unzip -j $< '*$(notdir $@)' -d tmp/source-code-pro ; \
+	cp tmp/source-code-pro/$(notdir $@) $@
+
+fonts-cjk/SourceHanMono.ttc: | fonts-cjk
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-mono/releases/download/1.002/SourceHanMono.ttc
+
+fonts-cjk/SourceHanSans-VF.ttf: .archive/source-han-sans.zip | fonts-cjk
+	mkdir -p tmp/source-han-sans; \
+	unzip -j $< '*$(notdir $@)' -d tmp/source-han-sans ; \
+	cp tmp/source-han-sans/$(notdir $@) $@
+
+fonts-cjk/SourceHanSerif-VF.ttf: .archive/source-han-serif.zip | fonts-cjk
+	mkdir -p tmp/source-han-serif; \
+	unzip -j $< '*$(notdir $@)' -d tmp/source-han-serif ; \
+	cp tmp/source-han-serif/$(notdir $@) $@
 
 tmp:
 	mkdir -p $@
 
-tmp/source-sans-pro.zip: | tmp
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-sans/releases/download/3.006R/source-sans-pro-3.006R.zip
+.archive:
+	mkdir -p $@
 
-tmp/source-serif-pro.zip: | tmp
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-serif/releases/download/3.001R/source-serif-pro-3.001R.zip
+.archive/source-sans-pro.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-sans/releases/download/3.046R/TTF-source-sans-3.046R.zip
 
-fonts/SourceHanSans.ttc: | fonts
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-sans/releases/download/2.001R/SourceHanSans.ttc
+.archive/source-serif-pro.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-serif/releases/download/4.004R/source-serif-4.004.zip
+
+.archive/source-code-pro.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-code-pro/releases/download/2.038R-ro%2F1.058R-it%2F1.018R-VAR/TTF-source-code-pro-2.038R-ro-1.058R-it.zip
+
+.archive/source-han-sans.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-sans/releases/download/2.004R/SourceHanSans-VF.zip
+
+.archive/source-han-serif.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-serif/releases/download/2.001R/02_SourceHanSerif-VF.zip
 
 # version:
 # 	echo "${JAR_VERSION}"
