@@ -1,0 +1,63 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup prerequisites
+        run: |
+          sudo apt-get update
+
+      - name: Build
+        run: |
+          make all
+
+      # - name: Run tests
+      #   env:
+      #     MN_PDF_FONT_PATH: ~/.fonts
+      #   run: |
+      #     make test
+
+      - uses: actions/upload-artifact@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: source-fonts.zip
+          path: source-fonts.zip
+          retention-days: 1
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: source-fonts.zip
+
+      - name: Get Version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+
+      - name: Rename artifact
+        run: |
+          mv source-fonts.zip source-fonts-${{ steps.get_version.outputs.VERSION }}.zip
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: softprops/action-gh-release@v1
+        with:
+          body: Automatic release of ${{ github.ref }}
+          files: |
+            *.zip
