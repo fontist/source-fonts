@@ -57,7 +57,7 @@ all: source-fonts.zip
 test:
 
 clean:
-	rm -f source-fonts.zip
+	rm -rf source-fonts.zip fonts
 
 distclean:
 	rm -rf fonts
@@ -68,26 +68,27 @@ source-fonts.zip: $(FONTS)
 fonts:
 	mkdir -p $(subst /,$(PATHSEP),$@)
 
-fonts/SourceSansPro-%: | fonts
-	export TMPDIR=$(mktemp); \
-	curl -sSL -o ${TMPDIR}/ssp.zip https://github.com/adobe-fonts/source-sans/releases/download/3.006R/source-sans-pro-3.006R.zip ; \
-	unzip -j -f ${TMPDIR}/ssp.zip *.ttf -d ${TMPDIR}fonts ; \
-	cp ${TMPDIR}fonts/SourceSansPro-*.ttf fonts/
+fonts/SourceSansPro-%: tmp/source-sans-pro.zip | fonts
+	mkdir -p tmp/source-sans-pro; \
+	unzip -j $< -d tmp/source-sans-pro ; \
+	cp tmp/source-sans-pro/SourceSansPro-*.ttf fonts/
 
-fonts/SourceSerifPro-%: | fonts
-	export TMPDIR=$(mktemp); \
-	curl -sSL -o ${TMPDIR}ssp.zip https://github.com/adobe-fonts/source-serif/releases/download/3.001R/source-serif-pro-3.001R.zip ; \
-	unzip -j -f ${TMPDIR}ssp.zip *.ttf -d ${TMPDIR}fonts ; \
-	cp ${TMPDIR}fonts/SourceSerifPro-*.ttf fonts/
+fonts/SourceSerifPro-%: tmp/source-serif-pro.zip | fonts
+	mkdir -p tmp/source-serif-pro; \
+	unzip -j $< -d tmp/source-serif-pro ; \
+	cp tmp/source-serif-pro/SourceSerifPro-*.ttf fonts/
 
 fonts/SourceCodePro-%: | fonts
 	curl -sSL -o $@ https://github.com/adobe-fonts/source-code-pro/raw/2.030R-ro/1.050R-it/TTF/$(notdir $@)
 
-# tmp:
-# 	mkdir -p $@
+tmp:
+	mkdir -p $@
 
-# tmp/SourceHanSans.7z: | tmp
-# 	curl -ssL -o $@ https://github.com/Pal3love/Source-Han-TrueType/raw/master/SourceHanSans.7z
+tmp/source-sans-pro.zip: | tmp
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-sans/releases/download/3.006R/source-sans-pro-3.006R.zip
+
+tmp/source-serif-pro.zip: | tmp
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-serif/releases/download/3.001R/source-serif-pro-3.001R.zip
 
 fonts/SourceHanSans.ttc: | fonts
 	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-sans/releases/download/2.001R/SourceHanSans.ttc
