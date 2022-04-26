@@ -1,7 +1,6 @@
 = Adobe Source fonts in a package
 
-https://github.com/fontist/source-fonts/actions/workflows/ubuntu.yml[image:https://github.com/fontist/source-fonts/actions/workflows/ubuntu.yml/badge.svg[]]
-https://github.com/fontist/source-fonts/actions/workflows/release.yml[image:https://github.com/fontist/source-fonts/actions/workflows/release.yml/badge.svg[]]
+https://github.com/fontist/source-fonts/actions/workflows/build.yml[image:https://github.com/fontist/source-fonts/actions/workflows/build.yml/badge.svg[]]
 
 == Purpose
 
