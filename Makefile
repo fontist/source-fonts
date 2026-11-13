@@ -62,7 +62,15 @@ CJK := \
 	SourceHanSans-Normal.ttc \
 	SourceHanSans-Regular.ttc
 
-FONTS := $(addprefix fonts/,$(LATN) $(CJK))
+# License texts ship inside the package: OFL-1.1 requires the license
+# and copyright notice to accompany any redistribution.
+LICENSES := \
+	fonts/LICENSE-SourceHanSans.txt \
+	fonts/LICENSE-SourceSansPro.txt \
+	fonts/LICENSE-SourceSerifPro.txt \
+	fonts/LICENSE-SourceCodePro.txt
+
+FONTS := $(addprefix fonts/,$(LATN) $(CJK)) $(LICENSES)
 
 all: source-fonts.zip
 
@@ -95,6 +103,22 @@ fonts/SourceCodePro-%: .archive/source-code-pro.zip | fonts tmp
 
 fonts/SourceHanSans-%.ttc: .archive/source-han-sans-ttf.zip | fonts
 	unzip -o -j $< '$(notdir $@)' -d fonts
+
+fonts/LICENSE-SourceSansPro.txt: .archive/source-sans-pro.zip | fonts tmp
+	unzip -o -j $< '*LICENSE.md' -d tmp/sanspro ; \
+	cp tmp/sanspro/LICENSE.md $@
+
+fonts/LICENSE-SourceSerifPro.txt: .archive/source-serif-pro.zip | fonts tmp
+	unzip -o -j $< '*LICENSE.md' -d tmp/serifpro ; \
+	cp tmp/serifpro/LICENSE.md $@
+
+# The Pal3love and Code Pro archives carry no license file; fetch the
+# texts from the repositories they were built from.
+fonts/LICENSE-SourceHanSans.txt: | fonts
+	curl -ssL -o $@ https://github.com/Pal3love/Source-Han-TrueType/raw/main/LICENSE.txt
+
+fonts/LICENSE-SourceCodePro.txt: | fonts
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-code-pro/raw/2.042R-u%2F1.062R-i%2F1.026R-vf/LICENSE.md
 
 .archive:
 	mkdir -p $@
