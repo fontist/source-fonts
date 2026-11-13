@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page" page-width="210mm" page-height="297mm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-family="Source Han Sans">Source Han Sans Regular 源ノ角ゴシック 思源黑体 本고딕</fo:block>
+      <fo:block font-family="Source Han Sans" font-weight="bold">Source Han Sans Bold 思源黑體 본고딕</fo:block>
+      <fo:block font-family="Source Sans Pro">Source Sans Pro Regular</fo:block>
+      <fo:block font-family="Source Sans Pro" font-weight="bold">Source Sans Pro Bold</fo:block>
+      <fo:block font-family="Source Serif Pro">Source Serif Pro Regular</fo:block>
+      <fo:block font-family="Source Serif Pro" font-weight="bold">Source Serif Pro Bold</fo:block>
+      <fo:block font-family="Source Code Pro">Source Code Pro Regular</fo:block>
+      <fo:block font-family="Source Code Pro" font-weight="bold">Source Code Pro Bold</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

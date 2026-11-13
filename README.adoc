@@ -4,25 +4,42 @@ https://github.com/fontist/source-fonts/actions/workflows/build.yml[image:https:
 
 == Purpose
 
-This repository is used to produce a single package for Adobe Source fonts.
+This repository is used to produce a single package for Adobe Source fonts
+for metanorma's PDF pipeline (mn2pdf / Apache FOP).
 
 == Contents
 
-There are two packages:
+One package: `source-fonts-{version}.zip`, with a flat `fonts/` directory
+containing static fonts only:
 
-`source-fonts-latn-{version}.zip` includes the Latn/Cyrl fonts:
-
-* https://github.com/adobe-fonts/source-sans-pro[Adobe Source Sans Pro]
-* https://github.com/adobe-fonts/source-serif-pro[Adobe Source Serif Pro]
+* https://github.com/adobe-fonts/source-sans[Adobe Source Sans Pro] (last
+  release published under the legacy family name; later releases rename the
+  family to "Source Sans 3", which metanorma stylesheets do not reference)
+* https://github.com/adobe-fonts/source-serif[Adobe Source Serif Pro] (same
+  legacy-name reasoning; later releases rename to "Source Serif 4")
 * https://github.com/adobe-fonts/source-code-pro[Adobe Source Code Pro]
-
-`source-fonts-cjk-{version}.zip` includes the same fonts but supporting all
-flavors of CJK:
-
-* https://github.com/adobe-fonts/source-han-sans[Adobe Source Han Sans]
-* https://github.com/adobe-fonts/source-han-serif[Adobe Source Han Serif]
-* https://github.com/adobe-fonts/source-han-mono[Adobe Source Han Mono]
+* https://github.com/adobe-fonts/source-han-sans[Adobe Source Han Sans] as
+  per-weight TTCs (TrueType conversions with the legacy family names, since
+  FOP cannot use the variable fonts Adobe ships at current versions)
 
 === Font versions
 
 See link:CHANGELOG.adoc[]
+
+== Release gating
+
+Every push and pull request runs `make test`
+(link:test/mn2pdf_compat.py[]), which fails the build when a font:
+
+* carries variable-font tables (`fvar`/`gvar`) — FOP renders a variable
+  font as its default instance only, so all weights would come out wrong,
+* or its filename trips mn2pdf's variable-font refusal heuristic
+  (`variablefont`/`wght`),
+* or a required legacy family ("Source Han Sans", "Source Sans Pro",
+  "Source Serif Pro", "Source Code Pro", and the Han Sans region
+  variants) is missing or lacks Regular/Bold styles.
+
+The release job additionally renders every required family at Regular and
+Bold through Apache FOP itself, and publishes only if that render
+succeeds. v1.3 shipped variable-font CJK files and renamed Latin families;
+this gate exists to make that class of breakage impossible to publish.

@@ -1,4 +1,3 @@
-#!make
 SHELL ?= /bin/bash
 ifdef ComSpec
 	PATHSEP2 := \\
@@ -6,6 +5,13 @@ else
 	PATHSEP2 := /
 endif
 PATHSEP := $(strip $(PATHSEP2))
+
+# v1.4 contract: single fonts/ flat layout (v1.0), all fonts static.
+# TrueType outlines only — Apache FOP (mn2pdf's PDF engine) cannot use
+# variable fonts, and the metanorma flavor stylesheets hardcode the
+# legacy family names (Source Sans Pro / Source Serif Pro / Source Han Sans).
+# Latin pins the last legacy-named Adobe builds (3.006R / 3.001R); Code Pro
+# never renamed, so it tracks the current static release.
 
 LATN := \
 	SourceCodePro-Black.ttf \
@@ -22,108 +28,99 @@ LATN := \
 	SourceCodePro-Regular.ttf \
 	SourceCodePro-Semibold.ttf \
 	SourceCodePro-SemiboldIt.ttf \
-	SourceSans3-SemiboldIt.ttf \
-	SourceSans3-Regular.ttf \
-	SourceSans3-BlackIt.ttf \
-	SourceSans3-It.ttf \
-	SourceSans3-Black.ttf \
-	SourceSans3-Bold.ttf \
-	SourceSans3-LightIt.ttf \
-	SourceSans3-ExtraLight.ttf \
-	SourceSans3-Light.ttf \
-	SourceSans3-Semibold.ttf \
-	SourceSans3-BoldIt.ttf \
-	SourceSans3-ExtraLightIt.ttf \
-	SourceSerif4-Black.ttf \
-	SourceSerif4-BlackIt.ttf \
-	SourceSerif4-Bold.ttf \
-	SourceSerif4-BoldIt.ttf \
-	SourceSerif4-ExtraLight.ttf \
-	SourceSerif4-ExtraLightIt.ttf \
-	SourceSerif4-It.ttf \
-	SourceSerif4-Light.ttf \
-	SourceSerif4-LightIt.ttf \
-	SourceSerif4-Regular.ttf \
-	SourceSerif4-Semibold.ttf \
-	SourceSerif4-SemiboldIt.ttf
+	SourceSansPro-Black.ttf \
+	SourceSansPro-BlackIt.ttf \
+	SourceSansPro-Bold.ttf \
+	SourceSansPro-BoldIt.ttf \
+	SourceSansPro-ExtraLight.ttf \
+	SourceSansPro-ExtraLightIt.ttf \
+	SourceSansPro-It.ttf \
+	SourceSansPro-Light.ttf \
+	SourceSansPro-LightIt.ttf \
+	SourceSansPro-Regular.ttf \
+	SourceSansPro-Semibold.ttf \
+	SourceSansPro-SemiboldIt.ttf \
+	SourceSerifPro-Black.ttf \
+	SourceSerifPro-BlackIt.ttf \
+	SourceSerifPro-Bold.ttf \
+	SourceSerifPro-BoldIt.ttf \
+	SourceSerifPro-ExtraLight.ttf \
+	SourceSerifPro-ExtraLightIt.ttf \
+	SourceSerifPro-It.ttf \
+	SourceSerifPro-Light.ttf \
+	SourceSerifPro-LightIt.ttf \
+	SourceSerifPro-Regular.ttf \
+	SourceSerifPro-Semibold.ttf \
+	SourceSerifPro-SemiboldIt.ttf
 
 CJK := \
-	SourceHanSans-VF.ttf \
-	SourceHanSerif-VF.ttf \
-	SourceHanMono.ttc
+	SourceHanSans-Bold.ttc \
+	SourceHanSans-ExtraLight.ttc \
+	SourceHanSans-Heavy.ttc \
+	SourceHanSans-Light.ttc \
+	SourceHanSans-Medium.ttc \
+	SourceHanSans-Normal.ttc \
+	SourceHanSans-Regular.ttc
 
-FONTS_LATN := $(addprefix fonts-latn/,$(LATN))
-FONTS_CJK := $(addprefix fonts-cjk/,$(notdir $(CJK)))
+FONTS := $(addprefix fonts/,$(LATN) $(CJK))
 
-all: source-fonts-latn.zip source-fonts-cjk.zip
+all: source-fonts.zip
 
-test:
+test: source-fonts.zip
+	python3 test/mn2pdf_compat.py source-fonts.zip
 
 clean:
-	rm -rf source-fonts-*.zip fonts-latn fonts-cjk tmp
+	rm -rf source-fonts.zip fonts tmp
 
 distclean: clean
 	rm -rf .archive
 
-source-fonts-latn.zip: $(FONTS_LATN)
-	zip -9 -r $@ fonts-latn
+source-fonts.zip: $(FONTS)
+	zip -9 -r $@ fonts
 
-source-fonts-cjk.zip: $(FONTS_CJK)
-	zip -9 -r $@ fonts-cjk
-
-fonts-%:
+fonts:
 	mkdir -p $(subst /,$(PATHSEP),$@)
 
-fonts-latn/SourceSans3-%: .archive/source-sans-pro.zip | fonts-latn
-	mkdir -p tmp/source-sans-pro; \
-	unzip -j $< '*$(notdir $@)' -d tmp/source-sans-pro ; \
-	cp tmp/source-sans-pro/$(notdir $@) $@
+fonts/SourceSansPro-%: .archive/source-sans-pro.zip | fonts tmp
+	unzip -o -j $< '*TTF/$(notdir $@)' -d tmp/sanspro ; \
+	cp tmp/sanspro/$(notdir $@) $@
 
-fonts-latn/SourceSerif4-%: .archive/source-serif-pro.zip | fonts-latn
-	mkdir -p tmp/source-serif-pro; \
-	unzip -j $< '*$(notdir $@)' -d tmp/source-serif-pro ; \
-	cp tmp/source-serif-pro/$(notdir $@) $@
+fonts/SourceSerifPro-%: .archive/source-serif-pro.zip | fonts tmp
+	unzip -o -j $< '*TTF/$(notdir $@)' -d tmp/serifpro ; \
+	cp tmp/serifpro/$(notdir $@) $@
 
-fonts-latn/SourceCodePro-%: .archive/source-code-pro.zip | fonts-latn
-	mkdir -p tmp/source-code-pro; \
-	unzip -j $< '*$(notdir $@)' -d tmp/source-code-pro ; \
-	cp tmp/source-code-pro/$(notdir $@) $@
+fonts/SourceCodePro-%: .archive/source-code-pro.zip | fonts tmp
+	unzip -o -j $< '*TTF/$(notdir $@)' -d tmp/codepro ; \
+	cp tmp/codepro/$(notdir $@) $@
 
-fonts-cjk/SourceHanMono.ttc: | fonts-cjk
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-mono/releases/download/1.002/SourceHanMono.ttc
-
-fonts-cjk/SourceHanSans-VF.ttf: .archive/source-han-sans.zip | fonts-cjk
-	mkdir -p tmp/source-han-sans; \
-	unzip -j $< '*$(notdir $@)' -d tmp/source-han-sans ; \
-	cp tmp/source-han-sans/$(notdir $@) $@
-
-fonts-cjk/SourceHanSerif-VF.ttf: .archive/source-han-serif.zip | fonts-cjk
-	mkdir -p tmp/source-han-serif; \
-	unzip -j $< '*$(notdir $@)' -d tmp/source-han-serif ; \
-	cp tmp/source-han-serif/$(notdir $@) $@
-
-tmp:
-	mkdir -p $@
+fonts/SourceHanSans-%.ttc: .archive/source-han-sans-ttf.zip | fonts
+	unzip -o -j $< '$(notdir $@)' -d fonts
 
 .archive:
 	mkdir -p $@
 
-.archive/source-sans-pro.zip: | .archive
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-sans/releases/download/3.046R/TTF-source-sans-3.046R.zip
+tmp:
+	mkdir -p $@
 
+# TrueType conversions of Source Han Sans 2.005 (TrueType outlines, legacy
+# family names, per-weight TTCs — the shape v1.0 shipped). Adobe's own
+# 2.005R assets are variable-font or CFF-only; FOP renders the TrueType
+# TTCs that every metanorma render since v1.0 has been built on.
+.archive/source-han-sans-ttf.zip: | .archive
+	curl -ssL -o $@ https://github.com/Pal3love/Source-Han-TrueType/releases/download/2.005-2.003-1.002-R/SourceHanSans.zip
+
+# Last "Source Sans Pro"-named release (the family was renamed to
+# "Source Sans 3" in later releases, which metanorma stylesheets do not
+# reference).
+.archive/source-sans-pro.zip: | .archive
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-sans/releases/download/3.006R/source-sans-pro-3.006R.zip
+
+# Last "Source Serif Pro"-named release (renamed to "Source Serif 4"
+# afterwards).
 .archive/source-serif-pro.zip: | .archive
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-serif/releases/download/4.004R/source-serif-4.004.zip
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-serif/releases/download/3.001R/source-serif-pro-3.001R.zip
 
 .archive/source-code-pro.zip: | .archive
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-code-pro/releases/download/2.038R-ro%2F1.058R-it%2F1.018R-VAR/TTF-source-code-pro-2.038R-ro-1.058R-it.zip
+	curl -ssL -o $@ https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/TTF-source-code-pro-2.042R-u_1.062R-i.zip
 
-.archive/source-han-sans.zip: | .archive
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-sans/releases/download/2.004R/SourceHanSans-VF.zip
-
-.archive/source-han-serif.zip: | .archive
-	curl -ssL -o $@ https://github.com/adobe-fonts/source-han-serif/releases/download/2.001R/02_SourceHanSerif-VF.zip
-
-# version:
-# 	echo "${JAR_VERSION}"
-
-.PHONY: all clean distclean test
+.PHONY: all test clean distclean
