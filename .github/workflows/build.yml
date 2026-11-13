@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install build dependencies
+        run: pip install fonttools==4.55.8
+
       - name: Build
         run: make all
 

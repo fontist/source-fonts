@@ -104,6 +104,13 @@ fonts/SourceCodePro-%: .archive/source-code-pro.zip | fonts tmp
 fonts/SourceHanSans-%.ttc: .archive/source-han-sans-ttf.zip | fonts
 	unzip -o -j $< '$(notdir $@)' -d fonts
 
+# The conversion mislabels the ExtraLight TTC's Hong Kong face
+# ("SourceHanSansHC"); repair it to the canonical name every other
+# weight TTC already uses.
+fonts/SourceHanSans-ExtraLight.ttc: .archive/source-han-sans-ttf.zip | fonts
+	unzip -o -j $< '$(notdir $@)' -d fonts ; \
+	python3 test/repair_hc_extralight.py fonts/SourceHanSans-ExtraLight.ttc
+
 fonts/LICENSE-SourceSansPro.txt: .archive/source-sans-pro.zip | fonts tmp
 	unzip -o -j $< '*LICENSE.md' -d tmp/sanspro ; \
 	cp tmp/sanspro/LICENSE.md $@
