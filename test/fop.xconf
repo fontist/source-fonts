@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <base>.</base>
+  <renderers>
+    <renderer mime="application/pdf">
+      <fonts>
+        <directory recursive="true">fonts</directory>
+      </fonts>
+    </renderer>
+  </renderers>
+</fop>
