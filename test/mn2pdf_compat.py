@@ -54,6 +54,18 @@ REQUIRED_LICENSES = {
 # either of these is refused as a variable font.
 BANNED_NAME_SUBSTRINGS = ("variablefont", "wght")
 
+# Every face must carry a canonical family (with spaces). Guards against
+# conversion artifacts like "SourceHanSansHC", which fontist would index
+# under a name no consumer looks up.
+CANONICAL_FAMILY_STEMS = (
+    "Source Han Sans",
+    "Source Han Serif",
+    "Source Han Mono",
+    "Source Sans Pro",
+    "Source Serif Pro",
+    "Source Code Pro",
+)
+
 VARIABLE_TABLES = ("fvar", "gvar")
 
 
@@ -174,6 +186,10 @@ def check_archive(path, failures):
                     fail_if(True, f"{member} face {index}: empty family name "
                                   f"(fontist cannot index it)", failures)
                     continue
+                if not family.startswith(CANONICAL_FAMILY_STEMS):
+                    fail_if(True, f"{member} face {index}: family {family!r} does not "
+                                  f"start with a canonical Source family stem "
+                                  f"(misnamed face; consumers cannot look it up)", failures)
                 families.setdefault(family, set()).add(subfamily)
         except (ValueError, struct.error) as e:
             fail_if(True, f"{member}: not a parseable sfnt container: {e}", failures)

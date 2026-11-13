@@ -141,7 +141,7 @@ which cannot render variable fonts and resolves the legacy family names):
 |Adobe `2.042R` statics
 
 .4+|v1.4
-pending tag
+2026-11-13
 .4+|yes — publication-gated (below)
 |Source Han Sans
 |`SourceHanSans-{weight}.ttc`
@@ -162,6 +162,33 @@ pending tag
 |`SourceCodePro-*.ttf`
 |2.042R
 |Adobe `2.042R` TTF zip
+
+.4+|v1.5
+pending tag
+.4+|yes — publication-gated (below)
+|Source Han Sans
+|`SourceHanSans-{weight}.ttc`
+|2.005
+|as v1.4, plus a build-step repair: the conversion's ExtraLight TTC
+names the Hong Kong face `SourceHanSansHC` (concatenated, no weight,
+unlike every other weight TTC); the build renames it to the canonical
+`Source Han Sans HC ExtraLight`, and the gate rejects any face whose
+family is not a canonical Source family
+
+|Source Sans Pro
+|`SourceSansPro-*.ttf`
+|3.006R
+|as v1.4
+
+|Source Serif Pro
+|`SourceSerifPro-*.ttf`
+|3.001R
+|as v1.4
+
+|Source Code Pro
+|`SourceCodePro-*.ttf`
+|2.042R
+|as v1.4
 |===
 
 Adobe does not publish static TrueType builds of current Source Han Sans
