@@ -12,7 +12,9 @@ fonts only if, for every face in every file:
   * it carries no variable-font tables (fvar/gvar) — mn2pdf's filename
     heuristic (variablefont/wght) is checked too as defense in depth,
 and the archive as a whole exposes, under the legacy family names,
-at least Regular and Bold styles for every family the fleet needs.
+at least Regular and Bold styles for every family the fleet needs,
+plus the OFL license text for each of them (OFL-1.1 requires the
+license to accompany any redistribution).
 
 Usage: python3 test/mn2pdf_compat.py SOURCE-FONTS.zip [more.zip ...]
 Exits nonzero if any check fails.
@@ -37,6 +39,16 @@ REQUIRED_FAMILIES = {
 }
 
 REQUIRED_STYLES = {"Regular", "Bold"}
+
+# OFL-1.1 requires the license text and copyright notice to accompany
+# any redistribution; each required family must ship its license file
+# next to the fonts (see the Makefile's LICENSES targets).
+REQUIRED_LICENSES = {
+    "fonts/LICENSE-SourceHanSans.txt": "Source Han Sans",
+    "fonts/LICENSE-SourceSansPro.txt": "Source Sans Pro",
+    "fonts/LICENSE-SourceSerifPro.txt": "Source Serif Pro",
+    "fonts/LICENSE-SourceCodePro.txt": "Source Code Pro",
+}
 
 # The substring heuristic in mn2pdf fontConfig.java: a path containing
 # either of these is refused as a variable font.
@@ -177,8 +189,22 @@ def check_archive(path, failures):
         fail_if(missing, f"{path}: family '{family}' missing styles {sorted(missing)} "
                          f"(mn2pdf registers one file per weight/style)", failures)
 
+    license_names = set(zf.namelist())
+    for license_path, family in sorted(REQUIRED_LICENSES.items()):
+        if license_path not in license_names:
+            fail_if(True, f"{path}: '{license_path}' missing "
+                          f"(OFL-1.1 requires the license to accompany the {family} fonts)", failures)
+            continue
+        text = zf.read(license_path).decode("utf-8", "replace").lower()
+        if len(text.strip()) == 0:
+            fail_if(True, f"{path}: '{license_path}' is empty", failures)
+        elif "open font license" not in text:
+            fail_if(True, f"{path}: '{license_path}' does not look like an OFL text "
+                          f"(no 'Open Font License' heading)", failures)
+
     print(f"checked {checked} faces, {len(families)} families, "
-          f"{len(REQUIRED_FAMILIES)} required families")
+          f"{len(REQUIRED_FAMILIES)} required families, "
+          f"{len(REQUIRED_LICENSES)} license files")
 
 
 def main(argv):
