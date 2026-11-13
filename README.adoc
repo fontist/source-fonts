@@ -22,6 +22,84 @@ containing static fonts only:
   per-weight TTCs (TrueType conversions with the legacy family names, since
   FOP cannot use the variable fonts Adobe ships at current versions)
 
+Each font file keeps the family name of the release it was built from; the
+file names in the package follow the v1.0 contract
+(`SourceSansPro-*.ttf`, `SourceSerifPro-*.ttf`, `SourceCodePro-*.ttf`,
+`SourceHanSans-{weight}.ttc`), so consumers (fontist formulas, mn2pdf
+manifests) can move between v1.0 and v1.4+ without changes.
+
+== Package-to-font-version provenance
+
+Every package version, what it contained, where the bytes came from, and
+whether it works with the metanorma PDF pipeline (mn2pdf / Apache FOP,
+which cannot render variable fonts and resolves the legacy family names):
+
+[cols="1,1,2,2,1"]
+|===
+|Package |Released |Contents (font → file set → font version) |Source of the bytes |mn2pdf-compatible?
+
+|v1.0
+|2022-04-26
+|Source Han Sans → `SourceHanSans-{weight}.ttc` → **2.000**;
+Source Sans Pro → `SourceSansPro-*.ttf` → **3.006**;
+Source Serif Pro → `SourceSerifPro-*.ttf` → **3.001**;
+Source Code Pro → `SourceCodePro-*.ttf` → **2.030**
+|Latin: TTFs from the `release` branches of the Adobe source font
+repositories; CJK: https://github.com/Pal3love/Source-Han-TrueType[PtrueType
+conversions] of Source Han Sans 2.000
+|yes (served metanorma 2022–2026)
+
+|v1.1
+|2022-04-26
+|same Latin as v1.0;
+Source Han Sans → single `fonts/SourceHanSans.ttc` → **2.001**
+|Latin as v1.0; CJK: TrueType conversion of 2.001
+|yes
+
+|v1.2
+|2022-04-26
+|CJK: Adobe variable fonts (Han Sans → `SourceHanSans-VF.ttf` → **2.004R**,
+Han Serif → `SourceHanSerif-VF.ttf` → **2.001R**, Mono → `SourceHanMono.ttc` → **1.002**);
+Latin: renamed statics (Source Sans **3** → `SourceSans3-*.ttf` → **3.046R**,
+Source Serif **4** → `SourceSerif4-*.ttf` → **4.004R**,
+Code Pro → `SourceCodePro-*.ttf` → **2.038R**)
+|Adobe release assets (`2.004R` VF zip, `3.046R`/`4.004R`/`2.038R` TTF zips)
+|no — variable fonts and renamed families; never wired into the fontist
+formula, so metanorma was unaffected
+
+|v1.3
+|2026-11-12
+|CJK: Adobe variable fonts (Han Sans VF → **2.005R**, Han Serif VF →
+**2.003R**, Mono → **1.002**); Latin: renamed statics (Source Sans **3** →
+**3.052R**, Source Serif **4** → **4.005R**, Code Pro → **2.042R**)
+|Adobe release assets (2.005R / 2.003R VF+CFF, 3.052R / 4.005R / 2.042R
+statics)
+|no — **broke metanorma PDF renders** (fontist/formulas#287); the fontist
+formula was reverted to the v1.0 archive the same day
+
+|v1.4 (this branch, untagged)
+|pending
+|Source Han Sans → `SourceHanSans-{weight}.ttc` → **2.005** (TrueType
+conversion); Source Sans Pro → `SourceSansPro-*.ttf` → **3.006R**;
+Source Serif Pro → `SourceSerifPro-*.ttf` → **3.001R**;
+Source Code Pro → `SourceCodePro-*.ttf` → **2.042R**
+|CJK:
+https://github.com/Pal3love/Source-Han-TrueType/releases/tag/2.005-2.003-1.002-R[TrueType
+conversion 2.005-2.003-1.002-R] (new outlines, legacy names, the format
+every metanorma render since v1.0 has been built on); Latin: Adobe
+`3.006R` / `3.001R` / `2.042R` TTF zips (the last legacy-named releases;
+Code Pro never renamed)
+|yes — publication-gated (below)
+|===
+
+Adobe does not publish static TrueType builds of current Source Han Sans
+under the legacy names — the 2.005R assets are variable fonts and CFF
+OTFs — so the TrueType conversion is the only source that satisfies both
+the format FOP renders and the names metanorma references. The Latin
+fonts remain at the last legacy-named releases for the same reason;
+beyond them, Adobe renames the family, which is a fleet-wide breaking
+change for metanorma.
+
 === Font versions
 
 See link:CHANGELOG.adoc[]
